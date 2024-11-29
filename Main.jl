@@ -1,5 +1,4 @@
-include("Fluid2d.jl")
-using .Fluid2d
+using Fluid2d
 using Dates
 
 function iteration(tstep, dt_out, t, iter, fluid::IdealGas)
@@ -21,10 +20,10 @@ function main()
   gamma = 1.4
   t_max = 3.0
   n_out = 100
-  dir = "data\\" ####ワーキングディレクトリーを設定してください。####
+  dir = joinpath(pkgdir(Fluid2d), "data") ####ワーキングディレクトリーを設定してください。####
   dir_o = dir     ####アウトプット用ディレクトリーを設定してください。####
-  f_settings = dir * "settings.dat" # 設定と log を出力するファイル
-  f_coord = dir * "coordinate.dat" # 計算格子の座標を取得するためのファイル
+  f_settings = joinpath(dir, "settings.dat") # 設定と log を出力するファイル
+  f_coord = joinpath(dir, "coordinate.dat") # 計算格子の座標を取得するためのファイル
 
   start = Dates.now()
 
@@ -36,7 +35,7 @@ function main()
   # set metrices/Jacobian/dx for CFL
   calc_metrices_dx(fluid.coord)
   # input initial condition
-  input(dir_o * "b0000000.dat", fluid.basic) # 初期条件が書かれたファイル
+  input(joinpath(dir_o, "b0000000.dat"), fluid.basic) # 初期条件が書かれたファイル
   t = 0.0
   # output settings
   output(f_settings, t_max, n_out, fluid.basic, fluid.eos, fluid.eq)
@@ -54,6 +53,10 @@ function main()
     output(dir_o, f_settings, tstep, t, iter, fluid.basic, cpu_time, rest_time)
   end
 
-  print("Main program ended.")  
+  print("Main program ended.")
   return
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+  main()
 end
