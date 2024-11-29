@@ -88,7 +88,7 @@ function output(dir_o, f_settings, tstep, t, iter, basic::BasicVarHD, cpu_time, 
   NJ = basic.NJ
 
   # output basic var to file
-  f_name = dir_o * @sprintf("b%07d.dat", tstep)
+  f_name = joinpath(dir_o, @sprintf("b%07d.dat", tstep))
   f = open(f_name,"w")
 
   for j = 1:NJ

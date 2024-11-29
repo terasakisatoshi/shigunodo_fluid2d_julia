@@ -66,15 +66,15 @@ end
 
 # export GenStructCoord, BasicVarHD, IdealEoS, EulerEq
 
-include("Fluid2d\\Fnd.jl")
-include("Fluid2d\\Eos.jl")
-include("Fluid2d\\Coordinate.jl")
-include("Fluid2d\\BC.jl")
-include("Fluid2d\\IO.jl")
-include("Fluid2d\\Conserved.jl")
-include("Fluid2d\\FluxScheme.jl")
-include("Fluid2d\\Eq.jl")
-include("Fluid2d\\Marching.jl")
+include("Fluid2d/Fnd.jl")
+include("Fluid2d/Eos.jl")
+include("Fluid2d/Coordinate.jl")
+include("Fluid2d/BC.jl")
+include("Fluid2d/IO.jl")
+include("Fluid2d/Conserved.jl")
+include("Fluid2d/FluxScheme.jl")
+include("Fluid2d/Eq.jl")
+include("Fluid2d/Marching.jl")
 
 using .Marching: march_ssprk3, calc_cfl
 using .IO: input, output
