@@ -17,11 +17,45 @@ function reconst_by_basic_muscl(rho,u,v,e)
 end
 
 # reconstruct by basic variables with MP5
-function reconst_by_basic_mp5(rho,u,v,e)
-  rho_l, rho_r = mp5(rho[1],rho[2],rho[3],rho[4],rho[5],rho[6])
-  u_l, u_r = mp5(u[1],u[2],u[3],u[4],u[5],u[6])
-  v_l, v_r = mp5(v[1],v[2],v[3],v[4],v[5],v[6])
-  e_l, e_r = mp5(e[1],e[2],e[3],e[4],e[5],e[6])
+@inline function reconst_by_basic_mp5(rho,u,v,e)
+  # use @inbounds macro to avoid boundary check
+  rho1 = @inbounds rho[1]
+  rho2 = @inbounds rho[2]
+  rho3 = @inbounds rho[3]
+  rho4 = @inbounds rho[4]
+  rho5 = @inbounds rho[5]
+  rho6 = @inbounds rho[6]
+
+  u1 = @inbounds u[1]
+  u2 = @inbounds u[2]
+  u3 = @inbounds u[3]
+  u4 = @inbounds u[4]
+  u5 = @inbounds u[5]
+  u6 = @inbounds u[6]
+
+  v1 = @inbounds v[1]
+  v2 = @inbounds v[2]
+  v3 = @inbounds v[3]
+  v4 = @inbounds v[4]
+  v5 = @inbounds v[5]
+  v6 = @inbounds v[6]
+
+  e1 = @inbounds e[1]
+  e2 = @inbounds e[2]
+  e3 = @inbounds e[3]
+  e4 = @inbounds e[4]
+  e5 = @inbounds e[5]
+  e6 = @inbounds e[6]
+
+  rho_l, rho_r = mp5(rho1,rho2,rho3,rho4,rho5,rho6)
+  u_l, u_r = mp5(u1,u2,u3,u4,u5,u6)
+  v_l, v_r = mp5(v1,v2,v3,v4,v5,v6)
+  e_l, e_r = mp5(e1,e2,e3,e4,e5,e6)
+
+  #rho_l, rho_r = mp5(rho[1],rho[2],rho[3],rho[4],rho[5],rho[6])
+  #u_l, u_r = mp5(u[1],u[2],u[3],u[4],u[5],u[6])
+  #v_l, v_r = mp5(v[1],v[2],v[3],v[4],v[5],v[6])
+  #e_l, e_r = mp5(e[1],e[2],e[3],e[4],e[5],e[6])
   return rho_l, u_l, v_l, e_l, rho_r, u_r, v_r, e_r
 end
 
@@ -52,7 +86,7 @@ function roe_average(rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,eos)
 end
 
 # classical Roe-type FDS
-function roe_fds(rho_l, u_l, v_l, e_l, rho_r, u_r, v_r, e_r, ixs, iys, s, eos)
+@inline function roe_fds(rho_l, u_l, v_l, e_l, rho_r, u_r, v_r, e_r, ixs, iys, s, eos)
   ix = ixs/s
   iy = iys/s
 
