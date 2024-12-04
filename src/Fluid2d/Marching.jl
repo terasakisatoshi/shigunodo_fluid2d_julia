@@ -54,7 +54,7 @@ function march_ssprk3(dt, bc_type, reconstruction, flux_scheme, basic::BasicVarH
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
       # update basic var
-      basic.rho[NB+i,NB+j], basic.u[NB+i,NB+j], basic.v[NB+i,NB+j], basic.e[NB+i,NB+j] = calc_basic(arr_q1[:,i,j],s_a)
+      basic.rho[NB+i,NB+j], basic.u[NB+i,NB+j], basic.v[NB+i,NB+j], basic.e[NB+i,NB+j] = calc_basic(@view(arr_q1[:,i,j]),s_a)
     end
   end
   reflect_bc(bc_type, basic, eos)
@@ -80,7 +80,7 @@ function march_ssprk3(dt, bc_type, reconstruction, flux_scheme, basic::BasicVarH
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
       # update basic var
-      basic.rho[NB+i,NB+j], basic.u[NB+i,NB+j], basic.v[NB+i,NB+j], basic.e[NB+i,NB+j] = calc_basic(arr_q0[:,i,j],s_a)
+      basic.rho[NB+i,NB+j], basic.u[NB+i,NB+j], basic.v[NB+i,NB+j], basic.e[NB+i,NB+j] = calc_basic(@view(arr_q0[:,i,j]),s_a)
     end
   end
   reflect_bc(bc_type, basic, eos)

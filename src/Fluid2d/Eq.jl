@@ -32,7 +32,12 @@ function calc_rhs(reconstruction, flux_scheme, basic::BasicVarHD, coord::GenStru
       if reconstruction == "MUSCL_minmod_basic"
         rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_muscl(basic.rho[NB+i-2:NB+i+1,NB+j],basic.u[NB+i-2:NB+i+1,NB+j],basic.v[NB+i-2:NB+i+1,NB+j],basic.e[NB+i-2:NB+i+1,NB+j])
       elseif reconstruction == "MP5_basic"
-        rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_mp5(basic.rho[NB+i-3:NB+i+2,NB+j],basic.u[NB+i-3:NB+i+2,NB+j],basic.v[NB+i-3:NB+i+2,NB+j],basic.e[NB+i-3:NB+i+2,NB+j])
+        rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_mp5(
+          @view(basic.rho[NB+i-3:NB+i+2,NB+j]),
+          @view(basic.u[NB+i-3:NB+i+2,NB+j]),
+          @view(basic.v[NB+i-3:NB+i+2,NB+j]),
+          @view(basic.e[NB+i-3:NB+i+2,NB+j])
+        )
       else
         throw(DomainError(reconstruction, "reconstruction scheme failed to be identified"))
       end
@@ -40,7 +45,7 @@ function calc_rhs(reconstruction, flux_scheme, basic::BasicVarHD, coord::GenStru
       # print(basic.rho[NB+i-2:NB+i+1,NB+j])
 
       # convective flux
-      arr_fi[:,i,j] = calc_num_flux(flux_scheme,rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,ixs_a,iys_a,s_a,eos)
+      arr_fi[:,i,j] .= calc_num_flux(flux_scheme,rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,ixs_a,iys_a,s_a,eos)
 
     end # for i
   end # for j
@@ -63,19 +68,24 @@ function calc_rhs(reconstruction, flux_scheme, basic::BasicVarHD, coord::GenStru
       if reconstruction == "MUSCL_minmod_basic"
         rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_muscl(basic.rho[NB+i,NB+j-2:NB+j+1],basic.u[NB+i,NB+j-2:NB+j+1],basic.v[NB+i,NB+j-2:NB+j+1],basic.e[NB+i,NB+j-2:NB+j+1])
       elseif reconstruction == "MP5_basic"
-        rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_mp5(basic.rho[NB+i,NB+j-3:NB+j+2],basic.u[NB+i,NB+j-3:NB+j+2],basic.v[NB+i,NB+j-3:NB+j+2],basic.e[NB+i,NB+j-3:NB+j+2])
+        rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r = reconst_by_basic_mp5(
+        @view(basic.rho[NB+i,NB+j-3:NB+j+2]),
+        @view(basic.u[NB+i,NB+j-3:NB+j+2]),
+        @view(basic.v[NB+i,NB+j-3:NB+j+2]),
+        @view(basic.e[NB+i,NB+j-3:NB+j+2]),
+        )
       else
         throw(DomainError(reconstruction, "reconstruction scheme failed to be identified"))
       end
 
       # convective flux
-      arr_fj[:,i,j] = calc_num_flux(flux_scheme,rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,jxs_a,jys_a,s_a,eos)
+      arr_fj[:,i,j] .= calc_num_flux(flux_scheme,rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,jxs_a,jys_a,s_a,eos)
 
     end # for i
   end # for j
 
   # evaluating RHS
-  return arr_fi[:,1:NI-2*NB,:] .- arr_fi[:,2:NI-2*NB+1,:] .+ arr_fj[:,:,1:NJ-2*NB] .- arr_fj[:,:,2:NJ-2*NB+1]
+  return @views @. arr_fi[:,1:NI-2*NB,:] - arr_fi[:,2:NI-2*NB+1,:] + arr_fj[:,:,1:NJ-2*NB] - arr_fj[:,:,2:NJ-2*NB+1]
 end # function calc_rhs
 
 # export calc_rhs
