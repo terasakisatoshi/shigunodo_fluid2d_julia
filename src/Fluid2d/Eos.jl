@@ -1,6 +1,8 @@
 module Eos
 
 using LinearAlgebra
+using StaticArrays: @SMatrix
+
 import ..IdealEoS
 # Equation of state
 
@@ -39,14 +41,21 @@ function calc_eigen(rho,u,v,e,ix,iy,eos::IdealEoS)
   b1 = 0.5*(u*u+v*v)*(eos.gam-1.0)/cs/cs
   b2 = (eos.gam-1.0)/cs/cs
   # diagonal matrix of eigen values
-  dia_lam = Diagonal([bigu-cs*sqr, bigu, bigu+cs*sqr, bigu])
+  # dia_lam = Diagonal([bigu-cs*sqr, bigu, bigu+cs*sqr, bigu])
+
+  dia_lam = @SMatrix [
+    bigu-cs*sqr 0.0 0.0 0.0;
+    0.0 bigu 0.0 0.0;
+    0.0 0.0 bigu+cs*sqr 0.0;
+    0.0 0.0 0.0 bigu
+  ]
   # right eigen matrix
-  mat_r = [1.0          1.0              1.0             0.0;
+  mat_r = @SMatrix [1.0          1.0              1.0             0.0;
           (u - ixb*cs)  u                (u + ixb*cs)    (-iyb);
           (v - iyb*cs)  v                (v + iyb*cs)     ixb;
           (h - cs*bigub)  0.5*(u*u+v*v)  (h + cs*bigub)  (-(iyb*u - ixb*v))]
   # inverse of righr eigen matrix
-  mat_rinv = [0.5*(b1 + bigub/cs)  (-0.5*(ixb/cs + b2*u))  (-0.5*(iyb/cs + b2*v))  0.5*b2;
+  mat_rinv = @SMatrix [0.5*(b1 + bigub/cs)  (-0.5*(ixb/cs + b2*u))  (-0.5*(iyb/cs + b2*v))  0.5*b2;
               (1.0 - b1)           b2*u                    b2*v                    (-b2);
               0.5*(b1 - bigub/cs)  0.5*(ixb/cs - b2*u)     0.5*(iyb/cs - b2*v)     0.5*b2;
               (iyb*u - ixb*v)      (-iyb)                  ixb                     0.0]

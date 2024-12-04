@@ -1,17 +1,18 @@
 module Conserved
+using StaticArrays: @SVector
 # construction of each terms in conservative equation
-using ..Eos: calc_p 
+using ..Eos: calc_p
 
 # conservative var from basic var
 function calc_conserv(rho, u, v, e, s)
-  return [rho*s, rho*u*s, rho*v*s, e*s]
+  return @SVector [rho*s, rho*u*s, rho*v*s, e*s]
 end
 
 # convective flux from basic var
 function calc_flux_conv(rho,u,v,e,ixs,iys,eos)
   bigu = ixs*u + iys*v
   p = calc_p(rho,u,v,e,eos)
-  return [rho*bigu, rho*u*bigu + ixs*p, rho*v*bigu + iys*p, (e+p)*bigu]
+  return @SVector [rho*bigu, rho*u*bigu + ixs*p, rho*v*bigu + iys*p, (e+p)*bigu]
 end
 
 # basic var from conservative var
