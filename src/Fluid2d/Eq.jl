@@ -5,14 +5,24 @@ import ..GenStructCoord
 import ..EulerEq
 using ..FluxScheme: reconst_by_basic_muscl, reconst_by_basic_mp5, calc_num_flux
 
+const NI = 408
+const NJ = 408
+const NB = 4
+
+const arr_fi = zeros(NB,NI-2*NB+1,NJ-2*NB)
+const arr_fj = zeros(NB,NI-2*NB,NJ-2*NB+1)
+const RHS = zeros(NB,NI-2*NB,NJ-2*NB)
+
 # calc RHS with selected reconstruction/flux scheme
 function calc_rhs(reconstruction, flux_scheme, basic::BasicVarHD, coord::GenStructCoord, eos, eq::EulerEq)
 
   NI = basic.NI
   NJ = basic.NJ
   NB = basic.NB
-  arr_fi = zeros(4,NI-2*NB+1,NJ-2*NB)
-  arr_fj = zeros(4,NI-2*NB,NJ-2*NB+1)
+  #arr_fi = zeros(4,NI-2*NB+1,NJ-2*NB)
+  #arr_fj = zeros(4,NI-2*NB,NJ-2*NB+1)
+  fill!(arr_fi,0.0)
+  fill!(arr_fj,0.0)
 
   # i-direction
   # evaluating numerical flux at (i+0.5,j)
@@ -85,7 +95,11 @@ function calc_rhs(reconstruction, flux_scheme, basic::BasicVarHD, coord::GenStru
   end # for j
 
   # evaluating RHS
-  return @views @. arr_fi[:,1:NI-2*NB,:] - arr_fi[:,2:NI-2*NB+1,:] + arr_fj[:,:,1:NJ-2*NB] - arr_fj[:,:,2:NJ-2*NB+1]
+  RHS .= @view arr_fi[:,1:NI-2*NB,:]
+  RHS .-= @view arr_fi[:,2:NI-2*NB+1,:]
+  RHS .+= @view arr_fj[:,:,1:NJ-2*NB]
+  RHS .-= @view arr_fj[:,:,2:NJ-2*NB+1]
+  return RHS
 end # function calc_rhs
 
 # export calc_rhs

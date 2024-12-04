@@ -8,6 +8,13 @@ using ..Conserved: calc_conserv, calc_basic
 using ..Eq: calc_rhs
 using ..BC: reflect_bc
 
+const NI = 408
+const NJ = 408
+const NB = 4
+const arr_q0 = zeros(NB,NI-2*NB,NJ-2*NB)
+const arr_q1 = zeros(NB,NI-2*NB,NJ-2*NB)
+const arr_q2 = zeros(NB,NI-2*NB,NJ-2*NB)
+
 # calc CFL condition
 function calc_cfl(cfl_coeff, basic::BasicVarHD, coord::GenStructCoord, eos)
 
@@ -37,7 +44,9 @@ function march_ssprk3(dt, bc_type, reconstruction, flux_scheme, basic::BasicVarH
   NB = basic.NB
 
   # construct conservative var
-  arr_q0 = zeros(4,NI-2*NB,NJ-2*NB)
+  # arr_q0 .= zeros(4,NI-2*NB,NJ-2*NB)
+  fill!(arr_q0,0.0)
+
   for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
@@ -47,7 +56,7 @@ function march_ssprk3(dt, bc_type, reconstruction, flux_scheme, basic::BasicVarH
   end
 
   # 1st stage
-  arr_q1 = calc_rhs(reconstruction, flux_scheme, basic, coord, eos, eq)
+  arr_q1 .= calc_rhs(reconstruction, flux_scheme, basic, coord, eos, eq)
   arr_q1 .= arr_q0 .+ dt .* arr_q1
   for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
@@ -60,7 +69,7 @@ function march_ssprk3(dt, bc_type, reconstruction, flux_scheme, basic::BasicVarH
   reflect_bc(bc_type, basic, eos)
 
   # 2nd stage
-  arr_q2 = calc_rhs(reconstruction, flux_scheme, basic, coord, eos, eq)
+  arr_q2 .= calc_rhs(reconstruction, flux_scheme, basic, coord, eos, eq)
   arr_q2 .= 0.75 .* arr_q0 .+ 0.25 .* (arr_q1 .+ dt .* arr_q2)
   for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
