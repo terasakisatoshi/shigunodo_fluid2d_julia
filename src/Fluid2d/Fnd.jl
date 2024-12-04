@@ -1,12 +1,14 @@
 module Fnd
 # reconstruction schemes are defined
 
-function minmod(x, y)
-  return sign(x) * max(min(abs(x), sign(x)*y), 0.0)
+@inline function minmod(x, y)
+  s = sign(x)
+  return s * max(min(abs(x), s*y), 0.0)
 end
 
-function minmod(x1,x2,x3,x4)
-  return 0.5*(sign(x1)+sign(x2))*abs(0.5*(sign(x1)+sign(x3))*0.5*(sign(x1)+sign(x4)))*min(abs(x1),abs(x2),abs(x3),abs(x4))
+@inline function minmod(x1,x2,x3,x4)
+  s = sign(x1)
+  return 0.5*(s+sign(x2))*abs(0.5*(s+sign(x3))*0.5*(s+sign(x4)))*min(abs(x1),abs(x2),abs(x3),abs(x4))
 end
 
 # MUSCL-minmod
