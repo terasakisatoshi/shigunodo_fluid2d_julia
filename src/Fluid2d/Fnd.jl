@@ -1,12 +1,12 @@
 module Fnd
 # reconstruction schemes are defined
 
-@inline function minmod(x, y)
+@inline @fastmath function minmod(x, y)
   s = sign(x)
   return s * max(min(abs(x), s*y), 0.0)
 end
 
-@inline function minmod(x1,x2,x3,x4)
+@inline @fastmath function minmod(x1,x2,x3,x4)
   s = sign(x1)
   return 0.5*(s+sign(x2))*abs(0.5*(s+sign(x3))*0.5*(s+sign(x4)))*min(abs(x1),abs(x2),abs(x3),abs(x4))
 end
@@ -30,7 +30,7 @@ function muscl_minmod(qm,q,qp,q2p)
   return q_l, q_r
 end
 
-function median(x,y,z)
+@inline function median(x,y,z)
   return x + minmod(y-x,z-x)
 end
 
