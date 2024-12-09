@@ -86,9 +86,10 @@ function calc_rhs(arrbuff::ArrayBuffer, reconstruction, flux_scheme, basic::Basi
   end # for j
 
   # evaluating RHS
+  fill!(arrbuff.arr_rhs, 0.0)
   arr_rhs = arrbuff.arr_rhs
-  arr_rhs .= @view arr_fi[:,1:NI-2*NB,:]
-  arr_rhs .-= @view arr_fi[:,1:NI-2*NB,:]
+  arr_rhs .+= @view arr_fi[:,1:NI-2*NB,:]
+  arr_rhs .-= @view arr_fi[:,2:NI-2*NB+1,:]
   arr_rhs .+= @view arr_fj[:,:,1:NJ-2*NB]
   arr_rhs .-= @view arr_fj[:,:,2:NJ-2*NB+1]
   return arr_rhs
