@@ -8,16 +8,16 @@ import ..IdealEoS
 
 # EoS for ideal gas
 
-function calc_p(rho,u,v,e,eos::IdealEoS)
+@inline function calc_p(rho,u,v,e,eos::IdealEoS)
   return (eos.gam-1.0)*(e - 0.5*rho*(u*u+v*v))
 end
 function calc_temp(rho,u,v,e,eos::IdealEoS)
   return e/rho - 0.5*(u*u+v*v)
 end
-function calc_cs(rho,u,v,e,eos::IdealEoS)
+@inline function calc_cs(rho,u,v,e,eos::IdealEoS)
   return sqrt(eos.gam*(eos.gam-1.0)*(e/rho - 0.5*(u*u+v*v)))
 end
-function calc_e(rho,u,v,h,eos::IdealEoS)
+@inline function calc_e(rho,u,v,h,eos::IdealEoS)
   return rho*(h + (eos.gam-1.0)*0.5*(u*u+v*v))/eos.gam
 end
 function calc_rho_e(p,temp,u,v,eos::IdealEoS)
@@ -29,7 +29,7 @@ function calc_e_wp(rho,u,v,p,eos::IdealEoS)
   return p/(eos.gam-1.0) + 0.5*rho*(u*u+v*v)
 end
 # calc eigen values/vectors of flux Jacobian
-function calc_eigen(rho,u,v,e,ix,iy,eos::IdealEoS)
+@inline function calc_eigen(rho,u,v,e,ix,iy,eos::IdealEoS)
   cs = calc_cs(rho,u,v,e,eos)
   p = calc_p(rho,u,v,e,eos)
   h = (e+p)/rho

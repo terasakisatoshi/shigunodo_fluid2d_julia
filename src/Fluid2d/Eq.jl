@@ -17,7 +17,7 @@ function calc_rhs(arrbuff::ArrayBuffer, reconstruction, flux_scheme, basic::Basi
 
   # i-direction
   # evaluating numerical flux at (i+0.5,j)
-  for j = 1:NJ-2*NB
+  @inbounds for j = 1:NJ-2*NB
     for i = 1:NI-2*NB+1
 
       # inverse of Jacobian is evaluated
@@ -53,7 +53,7 @@ function calc_rhs(arrbuff::ArrayBuffer, reconstruction, flux_scheme, basic::Basi
 
   # j-direction
   # evaluating numerical flux at (i,j+0.5)
-  for j = 1:NJ-2*NB+1
+  @inbounds for j = 1:NJ-2*NB+1
     for i = 1:NI-2*NB
 
       # inverse of Jacobian is evaluated

@@ -39,7 +39,7 @@ function march_ssprk3(arrbuff::ArrayBuffer, dt, bc_type, reconstruction, flux_sc
 
   # construct conservative var
   arr_q0 = arrbuff.arr_q0
-  for j = 1:NJ-2*NB
+  @inbounds for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
@@ -51,7 +51,7 @@ function march_ssprk3(arrbuff::ArrayBuffer, dt, bc_type, reconstruction, flux_sc
   arr_q1 = arrbuff.arr_q1
   arr_q1 .= calc_rhs(arrbuff, reconstruction, flux_scheme, basic, coord, eos, eq)
   arr_q1 .= arr_q0 .+ dt .* arr_q1
-  for j = 1:NJ-2*NB
+  @inbounds for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
@@ -65,7 +65,7 @@ function march_ssprk3(arrbuff::ArrayBuffer, dt, bc_type, reconstruction, flux_sc
   arr_q2 = arrbuff.arr_q2
   arr_q2 .= calc_rhs(arrbuff, reconstruction, flux_scheme, basic, coord, eos, eq)
   arr_q2 .= 0.75 .* arr_q0 .+ 0.25 .* (arr_q1 .+ dt .* arr_q2)
-  for j = 1:NJ-2*NB
+  @inbounds  for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
@@ -78,7 +78,7 @@ function march_ssprk3(arrbuff::ArrayBuffer, dt, bc_type, reconstruction, flux_sc
   # 3rd stage
   arr_q1 .= calc_rhs(arrbuff, reconstruction, flux_scheme, basic, coord, eos, eq)
   arr_q0 .= arr_q0 ./ 3.0 .+ 2.0 ./ 3.0 .* (arr_q2 .+ dt .* arr_q1)
-  for j = 1:NJ-2*NB
+  @inbounds for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])

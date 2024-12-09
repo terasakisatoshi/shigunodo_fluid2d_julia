@@ -10,7 +10,7 @@ function minmod(x1,x2,x3,x4)
 end
 
 # MUSCL-minmod
-function muscl_minmod(qm,q,qp,q2p)
+@inline function muscl_minmod(qm,q,qp,q2p)
   k = 1.0/3.0
   b = (3.0-k)/(1.0-k)
   # calc of L
@@ -28,11 +28,11 @@ function muscl_minmod(qm,q,qp,q2p)
   return q_l, q_r
 end
 
-function median(x,y,z)
+@inline function median(x,y,z)
   return x + minmod(y-x,z-x)
 end
 
-function mp5_sub(q2m,qm,q,qp,q2p)
+@inline function mp5_sub(q2m,qm,q,qp,q2p)
   alp = 2.0
   q_l = (2.0 * q2m - 13.0 * qm + 47.0 * q + 27.0 * qp - 3.0 * q2p) / 60.0
   q_mp = q + minmod(qp - q, alp * (q - qm))
@@ -53,7 +53,7 @@ function mp5_sub(q2m,qm,q,qp,q2p)
 end
 
 # MP5
-function mp5(q2m,qm,q,qp,q2p,q3p)
+@inline function mp5(q2m,qm,q,qp,q2p,q3p)
   q_l = mp5_sub(q2m,qm,q,qp,q2p)
   q_r = mp5_sub(q3p,q2p,qp,q,qm)
   return q_l, q_r

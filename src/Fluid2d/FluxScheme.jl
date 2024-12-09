@@ -18,10 +18,12 @@ end
 
 # reconstruct by basic variables with MP5
 function reconst_by_basic_mp5(rho,u,v,e)
-  rho_l, rho_r = mp5(rho[1],rho[2],rho[3],rho[4],rho[5],rho[6])
-  u_l, u_r = mp5(u[1],u[2],u[3],u[4],u[5],u[6])
-  v_l, v_r = mp5(v[1],v[2],v[3],v[4],v[5],v[6])
-  e_l, e_r = mp5(e[1],e[2],e[3],e[4],e[5],e[6])
+  @inbounds begin
+    rho_l, rho_r = mp5(rho[1],rho[2],rho[3],rho[4],rho[5],rho[6])
+    u_l, u_r = mp5(u[1],u[2],u[3],u[4],u[5],u[6])
+    v_l, v_r = mp5(v[1],v[2],v[3],v[4],v[5],v[6])
+    e_l, e_r = mp5(e[1],e[2],e[3],e[4],e[5],e[6])
+  end
   return rho_l, u_l, v_l, e_l, rho_r, u_r, v_r, e_r
 end
 
