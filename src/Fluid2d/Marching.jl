@@ -38,8 +38,8 @@ function march_ssprk3(arrbuff::ArrayBuffer, dt, bc_type, reconstruction, flux_sc
   NB = basic.NB
 
   # construct conservative var
-  for j = 1:NJ-2*NB
   arr_q0 = arrbuff.arr_q0
+  for j = 1:NJ-2*NB
     for i = 1:NI-2*NB
       # inverse of Jacobian: averaging adjacent 4 values
       s_a = 0.25 * (coord.s[NB+i-1,NB+j-1] + coord.s[NB+i,NB+j-1] + coord.s[NB+i-1,NB+j] + coord.s[NB+i,NB+j])
