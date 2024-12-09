@@ -46,9 +46,10 @@ function roe_average(rho_l,u_l,v_l,e_l,rho_r,u_r,v_r,e_r,eos)
   sqr_r = sqrt(rho_r)
 
   rho_a = sqr_l * sqr_r
-  u_a = (sqr_l*u_l + sqr_r*u_r)/(sqr_l + sqr_r)
-  v_a = (sqr_l*v_l + sqr_r*v_r)/(sqr_l + sqr_r)
-  h_a = (sqr_l*h_l + sqr_r*h_r)/(sqr_l + sqr_r)
+  inv_sqr_l_plus_sqr_r = inv(sqr_l + sqr_r)
+  u_a = (sqr_l*u_l + sqr_r*u_r) * inv_sqr_l_plus_sqr_r
+  v_a = (sqr_l*v_l + sqr_r*v_r) * inv_sqr_l_plus_sqr_r
+  h_a = (sqr_l*h_l + sqr_r*h_r) * inv_sqr_l_plus_sqr_r
   e_a = calc_e(rho_a,u_a,v_a,h_a,eos)
   return rho_a,u_a,v_a,e_a
 end
@@ -65,7 +66,6 @@ function roe_fds(rho_l, u_l, v_l, e_l, rho_r, u_r, v_r, e_r, ixs, iys, s, eos)
   vec_f_l = calc_flux_conv(rho_l,u_l,v_l,e_l,ixs,iys,eos)
   vec_f_r = calc_flux_conv(rho_r,u_r,v_r,e_r,ixs,iys,eos)
   dia_lam, mat_r, mat_rinv = calc_eigen(rho_a,u_a,v_a,e_a,ix,iy,eos)
-
   vec_fc = 0.5 .* (vec_f_r .+ vec_f_l  .- mat_r * abs.(dia_lam) * mat_rinv * (vec_q_r .- vec_q_l))
 
   return vec_fc
