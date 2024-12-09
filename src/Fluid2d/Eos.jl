@@ -1,7 +1,7 @@
 module Eos
 
 using LinearAlgebra
-using StaticArrays: @SMatrix
+using StaticArrays: @SMatrix, @SVector
 
 import ..IdealEoS
 # Equation of state
@@ -43,12 +43,8 @@ function calc_eigen(rho,u,v,e,ix,iy,eos::IdealEoS)
   # diagonal matrix of eigen values
   # dia_lam = Diagonal([bigu-cs*sqr, bigu, bigu+cs*sqr, bigu])
 
-  dia_lam = @SMatrix [
-    bigu-cs*sqr 0.0 0.0 0.0;
-    0.0 bigu 0.0 0.0;
-    0.0 0.0 bigu+cs*sqr 0.0;
-    0.0 0.0 0.0 bigu
-  ]
+  dia_lam = Diagonal(@SVector [bigu-cs*sqr, bigu, bigu+cs*sqr, bigu])
+
   # right eigen matrix
   mat_r = @SMatrix [1.0          1.0              1.0             0.0;
           (u - ixb*cs)  u                (u + ixb*cs)    (-iyb);
